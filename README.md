@@ -69,6 +69,7 @@ iot-health-intelligent/
 ├── ml/                 # Machine Learning Models
 └── docker-compose.yml  # Orchestration
 ```
+<img width="2965" height="8192" alt="image" src="https://github.com/user-attachments/assets/ba12d9cf-354f-4712-a4c8-d2a906f1ed6d" />
 
 ## 🛡 License
 
