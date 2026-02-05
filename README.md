@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 # IoT Health Intelligence - Water Quality Surveillance
 
 [![Stack](https://img.shields.io/badge/Stack-FastAPI%20%7C%20React%20%7C%20MQTT%20%7C%20MongoDB-blue)](https://github.com/desireeye/iot-health-intelligent)
@@ -76,4 +73,3 @@ iot-health-intelligent/
 ## 🛡 License
 
 MIT License
->>>>>>> de1b194 (Add README.md)
