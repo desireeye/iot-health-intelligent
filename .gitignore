@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+*.log
+
+# Node/JS
+node_modules/
+dist/
+build/
+.npm
+.eslintcache
+
+# System
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
+
+# Project specific
+backend/app/models/checkpoints/
+ml/data/

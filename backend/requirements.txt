@@ -1,0 +1,13 @@
+fastapi>=0.100.0
+uvicorn[standard]
+beanie>=1.20.0
+motor>=3.3.0
+pydantic-settings
+redis
+python-multipart
+paho-mqtt
+# For ML inference later
+scikit-learn
+pandas
+numpy
+joblib

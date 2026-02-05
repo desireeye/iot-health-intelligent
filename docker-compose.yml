@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # MQTT Broker
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883" # MQTT
+      - "9001:9001" # WebSockets
+    volumes:
+      - ./infra/mosquitto/config:/mosquitto/config
+      - ./infra/mosquitto/data:/mosquitto/data
+      - ./infra/mosquitto/log:/mosquitto/log
+    networks:
+      - iot_net
+
+  # Database - MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    command: [ "--replSet", "rs0", "--bind_ip_all" ]
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - iot_net
+    healthcheck:
+      test: echo 'try { rs.initiate() } catch (e) { rs.status() }' | mongosh --port 27017 --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # Cache & Stream - Redis
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - iot_net
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/iot_health_db
+      - REDIS_URI=redis://redis:6379
+      - MQTT_BROKER=mqtt
+      - MQTT_PORT=1883
+    depends_on:
+      - mongodb
+      - redis
+      - mqtt
+    volumes:
+      - ./ml/models:/app/models
+    networks:
+      - iot_net
+
+  # Frontend Dashboard
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - iot_net
+
+  # Edge Gateway
+  edge_node:
+    build: ./edge-processing
+    container_name: edge_node
+    restart: always
+    environment:
+      - BROKER=mqtt
+    depends_on:
+      - mqtt
+    networks:
+      - iot_net
+
+  # IoT Simulator
+  simulator:
+    build: ./iot-simulator
+    container_name: simulator
+    restart: always
+    environment:
+      - BROKER=mqtt
+    depends_on:
+      - mqtt
+    networks:
+      - iot_net
+
+networks:
+  iot_net:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
